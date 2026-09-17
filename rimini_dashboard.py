@@ -1870,6 +1870,11 @@ geojson (`data/popolazione/popolazione_rimini.geojson`,
 `data/popolazione/sezioni_censimento_rimini.geojson`). Il filtro
 quartiere è attivo.
 
+**Economia:** questa sezione legge 2 dataset geojson
+(`data/economia/commercio_rimini.geojson` per la grande distribuzione,
+`data/economia/imprese_rimini.geojson` per negozi/uffici/artigianato di
+dettaglio). Anche qui il filtro quartiere è attivo.
+
 **Territorio :** la prima parte della sezione legge direttamente 4
 dataset geojson  (`data/ambiente/aria_rimini.geojson`,
 `data/ambiente/energia_rimini.geojson`, `data/ambiente/meteo_rimini.geojson`,
@@ -1877,11 +1882,6 @@ dataset geojson  (`data/ambiente/aria_rimini.geojson`,
 **Open-Meteo**;
 se il servizio non risponde (es. assenza di connessione), la dashboard
 mostra "n.d." senza generare errori. 
-
-**Economia:** questa sezione legge 2 dataset geojson
-(`data/economia/commercio_rimini.geojson` per la grande distribuzione,
-`data/economia/imprese_rimini.geojson` per negozi/uffici/artigianato di
-dettaglio). Anche qui il filtro quartiere è attivo.
 
 **Servizi:** questa sezione legge 6 dataset geojson
 (`data/servizi/ospedali_rimini.geojson`,
