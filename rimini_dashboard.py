@@ -1864,14 +1864,13 @@ with st.expander("Nota metodologica"):
 indicatori del territorio in una barra laterale di sezioni tematiche
 navigabili. L'app si apre di default sulla sezione **Popolazione**.
 
-**Popolazione — dati reali:** questa sezione legge direttamente questi tre dataset
+**Popolazione — dati reali:** questa sezione legge direttamente tre dataset
 geojson (`data/popolazione/popolazione_rimini.geojson`,
 `data/popolazione/quartieri_rimini.geojson`,
 `data/popolazione/sezioni_censimento_rimini.geojson`). Il filtro
 quartiere è attivo.
 
-**Territorio — dati reali (parte "Ambiente") + placeholder (parte "Analisi
-per quartiere"):** la prima parte della sezione legge direttamente i 4
+**Territorio :** la prima parte della sezione legge direttamente 4
 dataset geojson  (`data/ambiente/aria_rimini.geojson`,
 `data/ambiente/energia_rimini.geojson`, `data/ambiente/meteo_rimini.geojson`,
 `data/ambiente/uso_suolo_rimini.geojson`).  Il meteo in tempo reale usa l'API gratuita
@@ -1879,15 +1878,14 @@ dataset geojson  (`data/ambiente/aria_rimini.geojson`,
 se il servizio non risponde (es. assenza di connessione), la dashboard
 mostra "n.d." senza generare errori. 
 
-**Economia — dati reali:** questa sezione legge 2 layer geojson
+**Economia:** questa sezione legge 2 dataset geojson
 (`data/economia/commercio_rimini.geojson` per la grande distribuzione,
 `data/economia/imprese_rimini.geojson` per negozi/uffici/artigianato di
 dettaglio). Anche qui il filtro quartiere è attivo.
 
-**Servizi — dati reali:** questa sezione legge 6 layer geojson
-+ Comune di Rimini (`data/servizi/ospedali_rimini.geojson`,
+**Servizi:** questa sezione legge 6 dataset geojson
+(`data/servizi/ospedali_rimini.geojson`,
 `scuole_rimini.geojson`, `trasporto_pubblico_rimini.geojson`,
 `parcheggi_rimini.geojson`, `eventi_rimini.geojson`,
 `ciclabili_rimini.geojson`). Anche qui il filtro quartiere è attivo.
-
-    """)
+""")
