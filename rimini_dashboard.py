@@ -426,6 +426,41 @@ div[data-testid="stMainBlockContainer"] div[data-testid="stSelectbox"] > div > d
     border: 1.5px solid #b3dff5 !important;
     border-radius: 8px !important;
 }
+
+/* ── Tendina di multiselect/selectbox ──
+   Il menu e' montato in un portale in fondo al <body>, fuori da
+   section[data-testid="stSidebar"]: le regole della sidebar non lo
+   raggiungono e resta sul backgroundColor scuro del theme. Va quindi
+   forzato con selettori globali sul popover BaseWeb. */
+div[data-baseweb="popover"] > div,
+div[data-baseweb="popover"] div[data-baseweb="menu"],
+div[data-baseweb="popover"] ul[role="listbox"] {
+    background-color: #ffffff !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 24px rgba(37,70,93,0.18) !important;
+}
+div[data-baseweb="popover"] ul[role="listbox"] {
+    border: 1.5px solid #b3dff5 !important;
+    padding: 0.25rem !important;
+}
+div[data-baseweb="popover"] li,
+div[data-baseweb="popover"] li[role="option"],
+div[data-baseweb="popover"] li * {
+    background-color: transparent !important;
+    color: #25465D !important;
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif !important;
+    font-size: 0.85rem !important;
+    border-radius: 6px !important;
+}
+div[data-baseweb="popover"] li:hover,
+div[data-baseweb="popover"] li[role="option"]:hover,
+div[data-baseweb="popover"] li[aria-selected="true"] {
+    background-color: #e8f4fb !important;
+}
+div[data-baseweb="popover"] li[aria-selected="true"],
+div[data-baseweb="popover"] li[aria-selected="true"] * {
+    font-weight: 600 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
