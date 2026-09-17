@@ -1890,3 +1890,4 @@ dettaglio). Anche qui il filtro quartiere è attivo.
 `parcheggi_rimini.geojson`, `eventi_rimini.geojson`,
 `ciclabili_rimini.geojson`). Anche qui il filtro quartiere è attivo.
 
+    """)
