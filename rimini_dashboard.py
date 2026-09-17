@@ -1570,7 +1570,7 @@ elif sezione == "Territorio":
                 Andamento di <b>temperatura</b> e <b>precipitazioni</b>
                 nell'ultimo anno sulla stazione meteo "{staz['name']}",
                 da dati storici di rianalisi (Open-Meteo Historical
-                Weather API — ERA5/ECMWF IFS).
+                Weather API).
             </div>
             """, unsafe_allow_html=True)
 
