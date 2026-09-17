@@ -1881,7 +1881,7 @@ dataset geojson  (`data/ambiente/aria_rimini.geojson`,
 `data/ambiente/uso_suolo_rimini.geojson`).  Il meteo in tempo reale usa l'API gratuita
 **Open-Meteo**;
 se il servizio non risponde (es. assenza di connessione), la dashboard
-mostra "n.d." senza generare errori. 
+mostra "n.d." senza generare errori. Qui non è attivo il filtro quartiere.
 
 **Servizi:** questa sezione legge 6 dataset geojson
 (`data/servizi/ospedali_rimini.geojson`,
