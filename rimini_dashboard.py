@@ -14,19 +14,6 @@ Sezioni:
                        del suolo/consumo di suolo per quartiere (placeholder)
     4. SERVIZI       — sanità, istruzione, trasporto pubblico, parcheggi,
                        rete ciclabile, cultura e sport (dati reali)
-
-NOTA BENE — QUESTO È UNO SCHELETRO
------------------------------------
-- La parte "Ambiente" della sezione TERRITORIO legge i 4 file geojson reali
-  forniti (aria_rimini.geojson, energia_rimini.geojson, meteo_rimini.geojson,
-  uso_suolo_rimini.geojson), che devono trovarsi in `data/ambiente/` accanto
-  a questo script. Popolazione, Economia e Servizi leggono a loro volta i
-  propri layer reali da `data/popolazione/`, `data/economia/` e
-  `data/servizi/`.
-- Solo la parte "Analisi per quartiere" di Territorio usa ancora dati
-  SINTETICI generati da `_genera_dati_placeholder`, solo per rendere l'app
-  eseguibile da subito. Ogni punto in cui va collegato un dataset reale del
-  Digital Twin è segnalato con `# TODO: DATO REALE`.
 """
 
 import json
@@ -146,12 +133,6 @@ def applica_layout(fig, height=None, xaxis_title=None, yaxis_title=None, **extra
     return fig
 
 
-# Compatibilità tra versioni di Plotly: da Plotly 5.24 in poi le mappe
-# "mapbox" (scatter_mapbox/choropleth_mapbox) sono deprecate a favore delle
-# nuove "map" basate su MapLibre (scatter_map/choropleth_map), che non
-# richiedono alcun token e funzionano allo stesso modo. Questo shim usa le
-# funzioni nuove se disponibili, altrimenti ricade su quelle storiche, così
-# lo script funziona sia con Plotly recente sia con installazioni più vecchie.
 _MAPPE_NUOVE = hasattr(px, "scatter_map")
 
 
@@ -189,10 +170,7 @@ def applica_layout_mappa(fig, height=460, titolo=None):
             bgcolor="rgba(244,250,255,0.9)", bordercolor=AXIS_COLOR, borderwidth=1,
             title_text="",
         ),
-        # Le mappe a colore continuo (choropleth) mostrano una colorbar che
-        # di default NON eredita bene il font globale: senza queste impostazioni
-        # esplicite i numeri della scala risultano poco leggibili sopra i tile
-        # della mappa.
+     
         coloraxis_colorbar=dict(
             tickfont=dict(color=TEXT_COLOR, size=12, family=CHART_FONT),
             title=dict(font=dict(color=TEXT_COLOR, size=12, family=CHART_FONT)),
@@ -467,10 +445,6 @@ AMBIENTE_FILES = {
     "uso_suolo": DATA_DIR / "ambiente/uso_suolo_rimini.geojson",
 }
 
-# Categorie di uso del suolo considerate "verdi" ai fini del KPI di sintesi.
-# TODO: DATO REALE — se disponibile, sostituire questa stima (% sul numero di
-# poligoni) con un calcolo di area reale via geopandas (.to_crs su un CRS
-# proiettato + .area), più corretto di un semplice conteggio di poligoni.
 LANDUSE_VERDE = {
     "grass", "forest", "meadow", "farmland", "orchard", "allotments",
     "recreation_ground", "flowerbed", "plant_nursery",
@@ -552,9 +526,6 @@ def meteo_live(lat: float, lon: float):
     Funzione opzionale "a valore aggiunto": se non c'è connessione o il
     servizio non risponde, ritorna None e la dashboard mostra un valore di
     fallback senza generare errori.
-    TODO: DATO REALE — sostituire con il feed meteo ufficiale del Digital
-    Twin/stazione locale se disponibile, mantenendo lo stesso formato
-    {"temperature":..., "windspeed":..., "weathercode":...}.
     """
     try:
         url = (
@@ -571,15 +542,11 @@ def meteo_live(lat: float, lon: float):
 @st.cache_data(ttl=86400)
 def meteo_storico(lat: float, lon: float) -> pd.DataFrame:
     """Serie storica di temperatura e precipitazioni per la stazione meteo
-    di Rimini, via la Historical Weather API di Open-Meteo (rianalisi
-    ERA5/ECMWF IFS, gratuita, senza chiave):
+    di Rimini, via la Historical Weather API di Open-Meteo 
     https://open-meteo.com/en/docs/historical-weather-api
 
     Copre gli ultimi 12 mesi circa, con 7 giorni di margine rispetto a
-    oggi per il ritardo di pubblicazione tipico dei dati di rianalisi. I
-    valori orari richiesti (temperature_2m, precipitation) vengono
-    aggregati lato client in medie/somme giornaliere, per un grafico
-    leggero e leggibile invece di ~8.700 punti orari grezzi.
+    oggi per il ritardo di pubblicazione tipico dei dati di rianalisi.
 
     Funzione opzionale "a valore aggiunto": se non c'è connessione o il
     servizio non risponde, ritorna un DataFrame vuoto e la dashboard mostra
@@ -694,16 +661,6 @@ def _dati_comune_da_geojson(geojson: dict) -> dict | None:
 
 @st.cache_data
 def carica_dati_popolazione():
-    """Carica i 3 layer geojson reali della sezione Popolazione (comune,
-    quartieri, sezioni di censimento) dalla cartella data/ accanto allo
-    script.
-
-    TODO: DATO REALE — se in futuro l'anagrafe comunale espone una serie
-    storica (più annualità), estendere qui il caricamento mantenendo una
-    colonna "anno", così i filtri periodo già presenti in sidebar potranno
-    essere applicati anche a questa sezione (oggi i dati sono una
-    fotografia 2023).
-    """
     risultato = {"comune": None, "quartieri": None, "sezioni": None,
                  "geojson_quartieri": None}
     mancanti = []
