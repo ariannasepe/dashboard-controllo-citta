@@ -1,11 +1,6 @@
 """
 Dashboard — Monitoraggio Territoriale Digital Twin Rimini
 ============================================================
-Scheletro applicativo per la dashboard di monitoraggio territoriale del
-Comune di Rimini, ispirata al sistema di visualizzazione e all'architettura
-informativa del portale "Dato Asturias" (https://datoasturias.com/):
-navigazione a sinistra tra sezioni tematiche, senza una vera e propria
-Home — la prima voce di navigazione è "Popolazione".
 
 Sezioni:
     1. POPOLAZIONE   — demografia, densità, struttura per età (dati reali)
@@ -688,24 +683,15 @@ ECONOMIA_FILES = {
     "imprese":   DATA_DIR / "economia" / "imprese_rimini.geojson",
 }
 
-# Macro-categoria a partire dal prefisso del tag "tipo" (schema OSM:
-# shop→negozio_*, office→ufficio_*, craft→artigianato_*).
 _PREFISSI_CATEGORIA = {
     "negozio": "Negozi", "ufficio": "Uffici", "artigianato": "Artigianato",
 }
 
-# Colori per le macro-categorie usati nei grafici e nella mappa della sezione
-# Economia. Tinte volutamente lontane tra loro (non solo diverse gradazioni
-# di blu/viola) per restare distinguibili anche sulla mappa con tanti punti
-# sovrapposti.
 MACRO_CATEGORIA_COLORS = {
     "Negozi": "#2E86AB", "Uffici": "#C1666B",
     "Artigianato": "#F4A261", "Grande distribuzione": "#00A878",
 }
 
-# Etichette leggibili per le sotto-categorie più diffuse (suffisso del tag
-# "tipo"); quelle non mappate qui vengono comunque mostrate, con il
-# suffisso originale reso leggibile come fallback.
 _ETICHETTE_SOTTOCATEGORIA = {
     "clothes": "Abbigliamento", "hairdresser": "Parrucchiere/Barbiere",
     "supermarket": "Supermercato", "tobacco": "Tabaccheria",
@@ -784,15 +770,6 @@ def _punto_in_poligono(lon, lat, geometry) -> bool:
 
 
 def _prepara_indice_quartieri(geojson_quartieri: dict | None):
-    """Precalcola, una sola volta, il bounding box di ciascun quartiere.
-
-    Il test punto-in-poligono (ray casting) è relativamente costoso se
-    ripetuto per centinaia di punti OSM (Economia, Servizi) su tutti i
-    quartieri: confrontare prima il bounding box scarta subito la quasi
-    totalità dei quartieri "sbagliati" per un dato punto — un punto fuori
-    dal bounding box non può mai essere dentro il poligono, quindi il
-    risultato finale non cambia, ma il caricamento diventa molto più
-    leggero."""
     indice = []
     if not geojson_quartieri:
         return indice
@@ -818,13 +795,6 @@ def _prepara_indice_quartieri(geojson_quartieri: dict | None):
 
 
 def _assegna_quartiere(lon, lat, indice_quartieri):
-    """Assegna un punto (lon, lat) al quartiere il cui poligono lo contiene,
-    incrociandolo con i confini reali di quartieri_rimini.geojson (nessuna
-    dipendenza da geopandas/shapely: un test ray-casting puro-Python è più
-    che sufficiente per poligoni di queste dimensioni). `indice_quartieri`
-    è l'indice precalcolato da `_prepara_indice_quartieri` (nome, geometria,
-    bounding box): il bounding box permette di scartare subito i quartieri
-    geograficamente incompatibili, prima del test più costoso."""
     if not indice_quartieri or lon is None:
         return None
     for q in indice_quartieri:
@@ -837,9 +807,6 @@ def _assegna_quartiere(lon, lat, indice_quartieri):
 
 
 def _geojson_esercizi_to_df(geojson: dict, geojson_quartieri, macro_fissa=None) -> pd.DataFrame:
-    """Converte un geojson di esercizi commerciali (punti OSM, con qualche
-    poligono) in un DataFrame con macro-categoria, sotto-categoria
-    leggibile, coordinate e quartiere di appartenenza."""
     righe = []
     for feat in geojson.get("features", []):
         p = feat.get("properties", {})
@@ -864,19 +831,6 @@ def _geojson_esercizi_to_df(geojson: dict, geojson_quartieri, macro_fissa=None) 
 
 @st.cache_data
 def carica_dati_economia(_geojson_quartieri):
-    """Carica i 2 layer geojson reali (OSM) della sezione Economia: grande
-    distribuzione (commercio_rimini.geojson) ed esercizi commerciali /
-    uffici / artigianato di dettaglio (imprese_rimini.geojson). Ogni punto
-    viene associato al quartiere di appartenenza incrociandolo con i
-    confini reali caricati per la sezione Popolazione (il parametro con
-    underscore iniziale dice a Streamlit di non provare ad hashare il
-    geojson per il caching).
-
-    TODO: DATO REALE — per un quadro economico in senso stretto (valore
-    aggiunto, occupazione, imprese per settore Ateco) andrebbero integrate
-    fonti Istat/Camera di Commercio; questi due layer OSM restano comunque
-    una mappa utile del tessuto commerciale al dettaglio.
-    """
     mancanti = []
     frame = []
     _geojson_quartieri = _prepara_indice_quartieri(_geojson_quartieri)
@@ -929,9 +883,6 @@ _ETICHETTE_CICLABILE = {
 }
 
 # Colori per tutte le tipologie di rete ciclabile (tonalità volutamente
-# lontane tra loro: prima solo le 4 più frequenti erano mappate esplicitamente
-# e le altre venivano assegnate da Plotly in automatico, risultando quasi
-# tutte in gradazioni di verde/azzurro).
 CICLABILI_TIPO_COLORS = {
     "Pista ciclabile": "#00A878", "Sentiero/pista promiscua": "#2E86AB",
     "Marciapiede/percorso pedonale": "#8E7CC3", "Area pedonale": "#F4A261",
@@ -1095,9 +1046,6 @@ QUARTIERI = [
 
 ANNI = list(range(2015, 2025))
 
-# Colori ufficiali per quartiere: se disponibili nel geojson reale vengono
-# sovrascritti più sotto da _colori_da_geojson_quartieri(); questa palette di
-# fallback copre il caso in cui il file non sia ancora presente in data/.
 QUARTIERE_COLORS = dict(zip(
     QUARTIERI,
     ["#25465D", "#2E86AB", "#4FC3F7", "#00A878", "#F4A261", "#E85933",
@@ -1134,8 +1082,6 @@ def _genera_dati_placeholder():
 @st.cache_data
 def carica_dati():
     try:
-        # TODO: DATO REALE — punto di ingresso unico per collegare le fonti
-        # ufficiali del Digital Twin di Rimini (CSV, DB, WFS/GeoJSON, API).
         return _genera_dati_placeholder()
     except Exception as e:
         st.error(f"Errore nel caricamento dati: {e}")
@@ -1225,8 +1171,6 @@ else:
     quartieri_attivi = quartiere_sel if quartiere_sel else QUARTIERI
     territorio_f = consumo_suolo_f = None
 
-# Popolazione: dati reali (fotografia 2023, nessuna serie storica per
-# quartiere), quindi filtrati solo per quartiere e non per periodo.
 if dati_popolazione is not None and dati_popolazione.get("quartieri") is not None:
     popolazione_f = dati_popolazione["quartieri"][
         dati_popolazione["quartieri"]["quartiere"].isin(quartieri_attivi)
@@ -1239,10 +1183,6 @@ else:
     popolazione_f = None
     sezioni_f = None
 
-# Economia: dati reali (punti OSM commercio/imprese), filtrati solo per
-# quartiere. I punti fuori dai confini dei 12 quartieri mappati (quartiere
-# non assegnato) restano sempre visibili, per non perdere silenziosamente
-# parte del dataset quando è selezionato un sottoinsieme di quartieri.
 if dati_economia is not None and len(dati_economia) > 0:
     economia_f = dati_economia[
         dati_economia["quartiere"].isin(quartieri_attivi) | dati_economia["quartiere"].isna()
@@ -1250,9 +1190,6 @@ if dati_economia is not None and len(dati_economia) > 0:
 else:
     economia_f = None
 
-# Servizi: dati reali (punti OSM sanità/istruzione/trasporto/eventi/
-# parcheggi e rete ciclabile), filtrati per quartiere con lo stesso
-# criterio "resta visibile se non assegnato" usato per l'Economia.
 if dati_servizi is not None and dati_servizi.get("punti") is not None and len(dati_servizi["punti"]) > 0:
     servizi_f = dati_servizi["punti"][
         dati_servizi["punti"]["quartiere"].isin(quartieri_attivi) | dati_servizi["punti"]["quartiere"].isna()
