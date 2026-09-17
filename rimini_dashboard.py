@@ -1860,65 +1860,33 @@ elif sezione == "Servizi":
 # ══════════════════════════════════════════════════════════════════════════
 with st.expander("Nota metodologica"):
     st.markdown("""
-**Navigazione:** le sezioni sono selezionabili dal menu a sinistra, sul
-modello del portale **Dato Asturias** (datoasturias.com), che organizza gli
+**Navigazione:** le sezioni sono selezionabili dal menu a sinistra, che organizza gli
 indicatori del territorio in una barra laterale di sezioni tematiche
 navigabili. L'app si apre di default sulla sezione **Popolazione**.
 
+**Popolazione — dati reali:** questa sezione legge direttamente questi tre dataset
+geojson (`data/popolazione/popolazione_rimini.geojson`,
+`data/popolazione/quartieri_rimini.geojson`,
+`data/popolazione/sezioni_censimento_rimini.geojson`). Il filtro
+quartiere è attivo.
+
 **Territorio — dati reali (parte "Ambiente") + placeholder (parte "Analisi
 per quartiere"):** la prima parte della sezione legge direttamente i 4
-layer geojson del Digital Twin di Rimini (`data/ambiente/aria_rimini.geojson`,
+dataset geojson  (`data/ambiente/aria_rimini.geojson`,
 `data/ambiente/energia_rimini.geojson`, `data/ambiente/meteo_rimini.geojson`,
-`data/ambiente/uso_suolo_rimini.geojson`). La percentuale di "superficie a
-verde" è stimata sul **numero di poligoni** di uso del suolo appartenenti a
-categorie verdi (prato, bosco, agricolo, ecc.): per un valore più preciso
-andrebbe calcolata l'area reale dei poligoni (es. con `geopandas`,
-proiettando su un CRS metrico). Il meteo in tempo reale usa l'API gratuita
-**Open-Meteo** sulle coordinate della stazione meteo presente nel dataset;
+`data/ambiente/uso_suolo_rimini.geojson`).  Il meteo in tempo reale usa l'API gratuita
+**Open-Meteo**;
 se il servizio non risponde (es. assenza di connessione), la dashboard
-mostra "n.d." senza generare errori. Subito sotto, un andamento
-**storico** di temperatura e precipitazioni degli ultimi 12 mesi viene
-scaricato dalla [Historical Weather API di
-Open-Meteo](https://open-meteo.com/en/docs/historical-weather-api)
-(rianalisi ERA5/ECMWF IFS): i dati orari richiesti (temperatura,
-precipitazioni) sono aggregati in valori giornalieri/mensili lato
-applicazione per un grafico leggero. La seconda parte della sezione
-("Analisi per quartiere": superficie, verde e impermeabilizzato per
-quartiere, consumo di suolo storico) usa invece dati **placeholder** — i
-filtri quartiere/periodo in sidebar si applicano solo a quella parte.
+mostra "n.d." senza generare errori. 
 
-**Popolazione — dati reali:** questa sezione legge direttamente i 3 layer
-geojson del Digital Twin di Rimini (`data/popolazione/popolazione_rimini.geojson`,
-`data/popolazione/quartieri_rimini.geojson`,
-`data/popolazione/sezioni_censimento_rimini.geojson`). I dati sono una
-fotografia ISTAT 2023: non essendo disponibile una serie storica per
-quartiere, i filtri di periodo in sidebar non si applicano a questa
-sezione (solo il filtro quartiere è attivo).
-
-**Economia — dati reali:** questa sezione legge 2 layer geojson OpenStreetMap
+**Economia — dati reali:** questa sezione legge 2 layer geojson
 (`data/economia/commercio_rimini.geojson` per la grande distribuzione,
 `data/economia/imprese_rimini.geojson` per negozi/uffici/artigianato di
-dettaglio). Il quartiere di ciascun punto è calcolato con un test
-punto-in-poligono sui confini reali caricati per la sezione Popolazione
-(nessuna dipendenza da geopandas/shapely). Anche qui non è disponibile una
-serie storica, quindi solo il filtro quartiere è attivo.
+dettaglio). Anche qui il filtro quartiere è attivo.
 
-**Servizi — dati reali:** questa sezione legge 6 layer geojson OpenStreetMap
+**Servizi — dati reali:** questa sezione legge 6 layer geojson
 + Comune di Rimini (`data/servizi/ospedali_rimini.geojson`,
 `scuole_rimini.geojson`, `trasporto_pubblico_rimini.geojson`,
 `parcheggi_rimini.geojson`, `eventi_rimini.geojson`,
-`ciclabili_rimini.geojson`). Il quartiere dei punti è calcolato con lo
-stesso test punto-in-poligono usato per l'Economia; per le linee della
-rete ciclabile viene invece usato il punto medio di ciascun tratto. La
-lunghezza dei tratti ciclabili è stimata sommando la distanza haversine
-tra vertici consecutivi (nessuna dipendenza da geopandas/shapely). Anche
-qui non è disponibile una serie storica, quindi solo il filtro quartiere è
-attivo. L'indicatore "servizi ogni 1.000 abitanti" in fondo alla sezione è
-calcolato incrociando il conteggio dei servizi per quartiere con la
-popolazione reale caricata per la sezione Popolazione.
+`ciclabili_rimini.geojson`). Anche qui il filtro quartiere è attivo.
 
-**Estensioni previste:** aggiunta di una sezione "Esplora i dati" con
-tabella navigabile e download CSV, calcolo di area reale per i poligoni di
-uso del suolo, e collegamento dei filtri quartiere/periodo anche ai layer
-ambientali quando saranno disponibili con quella granularità.
-""")
